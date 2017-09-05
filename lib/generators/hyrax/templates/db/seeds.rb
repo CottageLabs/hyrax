@@ -8,10 +8,36 @@
 
 user = User.create(email: 'foo@example.org', password: 'foobarbaz')
 
+# Public Nested User Collection, no contents
+Collection.create!(title: ["Parent Collection"], read_groups: ['public'], collection_type_gid: 'gid://internal/hyrax-collectiontype/1') do |parent|
+  parent.apply_depositor_metadata(user)
+  Collection.create!(title: ["Child Collection"], read_groups: ['public'], collection_type_gid: 'gid://internal/hyrax-collectiontype/1') do |child|
+    child.apply_depositor_metadata(user)
+    child.member_of_collections = [parent]
+  end
+end
+
+# Public User Collection
+puc = Collection.create!(title: ["Public User Collection"], read_groups: ['public'], collection_type_gid: 'gid://internal/hyrax-collectiontype/1') do |col|
+  col.apply_depositor_metadata(user)
+end
+
+# Parent Collection
+pc = Collection.create!(title: ["Another Parent Collection"], read_groups: ['public'], collection_type_gid: 'gid://internal/hyrax-collectiontype/1') do |parent|
+  parent.apply_depositor_metadata(user)
+end
+
+# Child Collection
+cc = Collection.create!(title: ["Another Child Collection"], read_groups: ['public'], collection_type_gid: 'gid://internal/hyrax-collectiontype/1') do |child|
+  child.apply_depositor_metadata(user)
+  child.member_of_collections = [pc]
+end
+
 # Public
 3.times do |i|
   GenericWork.create(title: ["Public #{i}"], read_groups: ['public']) do |work|
     work.apply_depositor_metadata(user)
+    work.member_of_collections = [puc]
   end
 end
 
@@ -19,6 +45,7 @@ end
 2.times do |i|
   GenericWork.create(title: ["Authenticated #{i}"], read_groups: ['registered']) do |work|
     work.apply_depositor_metadata(user)
+    work.member_of_collections = [pc]
   end
 end
 
@@ -26,6 +53,7 @@ end
 1.times do |i|
   GenericWork.create(title: ["Private #{i}"]) do |work|
     work.apply_depositor_metadata(user)
+    work.member_of_collections = [cc]
   end
 end
 

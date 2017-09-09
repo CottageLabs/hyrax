@@ -14,4 +14,5 @@ Blacklight.onLoad(function () {
       e.preventDefault();
       $('#add-collection-to-collection-modal').modal('show');
   });
+
 });

@@ -45,8 +45,11 @@
       <% end %>
     <% end %>
     <br>
+    <%# TODO: setting cancel_path could probably be handled more intelligently
+              currenly polymorphic_path fails for batch  %>
+    <% cancel_path = polymorphic_path([main_app, f.object]) rescue hyrax.my_works_path %>
     <%= link_to t(:'helpers.action.cancel'),
-                hyrax.my_works_path,
+                cancel_path,
                 class: 'btn btn-default' %>
     <%# TODO: If we start using ActionCable, we could listen for object updates and
               alert the user that the object has changed by someone else %>

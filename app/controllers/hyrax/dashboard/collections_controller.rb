@@ -219,11 +219,7 @@ module Hyrax
         end
 
         def update_referer
-          if params[:referer_anchor]
-            edit_dashboard_collection_path(@collection) + params[:referer_anchor]
-          else
-            dashboard_collection_path(@collection)
-          end
+          edit_dashboard_collection_path(@collection) + (params[:referer_anchor] || '')
         end
 
         def determine_banner_data
